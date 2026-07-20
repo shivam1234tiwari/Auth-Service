@@ -1,4 +1,6 @@
-export const authMiddleware = (req, res, next) => {
+import supabase from "../config/supabase.js";
+
+export const authMiddleware = async (req, res, next) => {
 
   const authHeader = req.headers.authorization;
 
@@ -7,6 +9,18 @@ export const authMiddleware = (req, res, next) => {
       error: "Access token required",
     });
   }
+
+  const token = authHeader.split(" ")[1];
+
+  const { data, error } = await supabase.auth.getUser(token);
+
+  if (error) {
+    return res.status(401).json({
+      error: "Invalid or expired token",
+    });
+  }
+
+  req.user = data.user;
 
   next();
 };
