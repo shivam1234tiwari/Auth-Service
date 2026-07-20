@@ -50,3 +50,22 @@ export const login=async(req,res)=>{
         })
     }
 }
+export const logout = async (req, res) => {
+  try {
+    const { error } = await supabase.auth.signOut();
+
+    if (error) {
+      return res.status(400).json({
+        error: error.message,
+      });
+    }
+
+    return res.status(200).json({
+      message: "Logged out successfully",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      error: "Internal Server Error",
+    });
+  }
+};
